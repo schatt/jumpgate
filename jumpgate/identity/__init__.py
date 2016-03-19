@@ -1,13 +1,14 @@
 
-
 def add_endpoints(disp):
     # Versions
     disp.add_endpoint('versions', '/')
 
     # V3 API - http://api.openstack.org/api-ref-identity.html#identity-v3
 
+    disp.add_endpoint('v3_auth_index', '/v3')
+
     # Tokens
-    disp.add_endpoint('v3_tokens', '/v3/tokens')
+    disp.add_endpoint('v3_auth_tokens', '/v3/auth/tokens')
 
     # Service Catalog
     disp.add_endpoint('v3_services', '/v3/services')

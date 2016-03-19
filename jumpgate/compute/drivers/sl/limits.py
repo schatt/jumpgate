@@ -7,7 +7,7 @@ class LimitsV2(object):
         account = client['Account'].getObject(
             mask='mask[hourlyVirtualGuestCount]')
 
-        # TODO - This shouldn't be hardcoded
+        # TODO(kmcdonald) - This shouldn't be hardcoded
         limits = {
             'absolute': {
                 'maxImageMeta': 0,
@@ -26,7 +26,9 @@ class LimitsV2(object):
                 'totalRAMUsed': 0,
                 'totalFloatingIpsUsed': 0,
                 'totalSecurityGroupsUsed': 0,
-            }
+            },
+            # TODO(imkarrer) - Added rate to make tempest pass, need real rate
+            'rate': [],
         }
 
         resp.body = {'limits': limits}

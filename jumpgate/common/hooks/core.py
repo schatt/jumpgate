@@ -1,12 +1,12 @@
 import json
-import logging
 import uuid
 
-import falcon.status_codes
+from falcon import status_codes
 
-LOG = logging.getLogger(__name__)
+from jumpgate.common import hooks
 
 
+@hooks.response_hook(False)
 def hook_format(req, resp):
     body = resp.body
     if body is not None and not resp.content_type:
@@ -14,21 +14,13 @@ def hook_format(req, resp):
         resp.body = json.dumps(body)
 
     if isinstance(resp.status, int):
-        resp.status = getattr(falcon.status_codes,
+        resp.status = getattr(status_codes,
                               'HTTP_%s' % resp.status,
                               resp.status)
 
     resp.set_header('X-Compute-Request-Id', req.env['REQUEST_ID'])
 
 
-def hook_log_request(req, resp):
-    LOG.info('%s %s %s %s [ReqId: %s]',
-             req.method,
-             req.path,
-             req.query_string,
-             resp.status,
-             req.env['REQUEST_ID'])
-
-
+@hooks.request_hook(False)
 def hook_set_uuid(req, resp, kwargs):
     req.env['REQUEST_ID'] = 'req-' + str(uuid.uuid1())

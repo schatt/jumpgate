@@ -1,4 +1,9 @@
-from jumpgate.common.error_handling import error
+import logging
+
+from jumpgate.common import error_handling
+
+
+LOG = logging.getLogger(__name__)
 
 
 class ResponseException(Exception):
@@ -14,9 +19,23 @@ class ResponseException(Exception):
 
     @staticmethod
     def handle(ex, req, resp, params):
-        error(resp, ex.error_type, ex.msg, details=ex.details, code=ex.code)
+        error_handling.error(resp, ex.error_type, ex.msg,
+                             details=ex.details,
+                             code=ex.code)
 
 
 class Unauthorized(ResponseException):
     error_type = 'unauthorized'
     code = 401
+
+
+class InvalidTokenError(Unauthorized):
+
+    @staticmethod
+    def handle(ex, req, resp, params):
+        LOG.debug(ex.msg)
+        error_handling.error(resp, ex.error_type,
+                             "The token is either malformed, expired or not "
+                             "valid for the given user/tenant pair",
+                             details=ex.details,
+                             code=ex.code)
